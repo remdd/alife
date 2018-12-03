@@ -1,0 +1,17 @@
+.container {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 1200px;
+  height: 720px;
+}
+
+canvas {
+  width: 100%;
+  height: 100%;
+  border: 1px solid lightgrey;
+  image-rendering: pixelated;
+}
+
+/*# sourceMappingURL=alife.css.map */
