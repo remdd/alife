@@ -23,10 +23,19 @@ var al = {
 				this.grid[i] = [];
 				for(let j = 0; j < al.mainCanvas.height; j++) {
 					this.grid[i][j] = new bgPixel(i, j);
-					console.log(this.grid[i][j].color.r);
 					this.grid[i][j].setColor();
+					this.grid[i][j].draw();
 				}
 			}
+			console.log(this.grid);
+		},
+		update: function() {
+			$('#fps').text(MainLoop.getFPS());
+			this.grid.forEach(column => {
+				column.forEach(bgPixel => {
+					bgPixel.changeColor();
+				});
+			});
 		},
 		draw: function() {
 			this.grid.forEach(column => {
@@ -47,16 +56,17 @@ var al = {
 			al.entities.creatures.push(creature1);
 		},
 		update: function() {
+			al.background.update();
 			al.entities.creatures.forEach(creature => {
 				// creature.move();
 			});
 		},
 		draw: function() {
 			al.mainCanvas.clear();
-			// al.background.draw();
-			al.entities.creatures.forEach(creature => {
-				drawEntity(creature);
-			});
+			al.background.draw();
+			// al.entities.creatures.forEach(creature => {
+			// 	drawEntity(creature);
+			// });
 		},
 		start: function() {
 			this.setup();
@@ -80,31 +90,34 @@ function bgPixel(y, x) {
 		r: 0,
 		g: 0,
 		b: 0,
-		max_r: 60,
-		min_r: 20,
-		max_g: 30,
-		min_g: 10,
-		max_b: 20,
-		min_b: 5
-	},
-	this.setColor = function(r, g, b) {
-		this.color.r = r ? r : Math.floor(Math.random() * (this.color.max_r - this.color.min_r) + this.color.min_r);
-		this.color.g = g ? g : Math.floor(Math.random() * (this.color.max_g - this.color.min_g) + this.color.min_g);
-		this.color.b = b ? b : Math.floor(Math.random() * (this.color.max_b - this.color.min_b) + this.color.min_b);
-	},
-	this.changeColor = function() {
-		let r_change = Math.floor(Math.random() * 3) - 1;
-		let g_change = Math.floor(Math.random() * 3) - 1;
-		let b_change = Math.floor(Math.random() * 3) - 1;
-		this.color.r = (this.color.r + r_change <= this.color.max_r && this.color.r + r_change >= this.color.min_r) ? this.color.r + r_change : this.color.r;
-		this.color.g = (this.color.g + g_change <= this.color.max_g && this.color.g + g_change >= this.color.min_g) ? this.color.g + g_change : this.color.g;
-		this.color.b = (this.color.b + b_change <= this.color.max_b && this.color.r + b_change >= this.color.min_b) ? this.color.b + b_change : this.color.b;
-	},
-	this.draw = function() {
-		al.mainCanvas.ctx.fillStyle = 'rgb(' + this.color.r + ',' + this.color.g + ',' + this.color.b + ')';
-		al.mainCanvas.ctx.rect(this.position.x, this.position.y, 1, 1);
-		al.mainCanvas.ctx.fill();
 	}
+}
+var bg = {
+	max_r: 30,
+	min_r: 20,
+	max_g: 20,
+	min_g: 5,
+	max_b: 30,
+	min_b: 5,
+	changeSpeed: 9,
+} 
+
+bgPixel.prototype.setColor = function(r, g, b) {
+	this.color.r = r ? r : Math.floor(Math.random() * (bg.max_r - bg.min_r) + bg.min_r);
+	this.color.g = g ? g : Math.floor(Math.random() * (bg.max_g - bg.min_g) + bg.min_g);
+	this.color.b = b ? b : Math.floor(Math.random() * (bg.max_b - bg.min_b) + bg.min_b);
+}
+bgPixel.prototype.changeColor = function() {
+	let r_change = Math.floor(Math.random() * bg.changeSpeed) - ((bg.changeSpeed -1) / 2);
+	let g_change = Math.floor(Math.random() * bg.changeSpeed) - ((bg.changeSpeed -1) / 2);
+	let b_change = Math.floor(Math.random() * bg.changeSpeed) - ((bg.changeSpeed -1) / 2);
+	this.color.r = (this.color.r + r_change <= bg.max_r && this.color.r + r_change >= bg.min_r) ? this.color.r + r_change : this.color.r;
+	this.color.g = (this.color.g + g_change <= bg.max_g && this.color.g + g_change >= bg.min_g) ? this.color.g + g_change : this.color.g;
+	this.color.b = (this.color.b + b_change <= bg.max_b && this.color.r + b_change >= bg.min_b) ? this.color.b + b_change : this.color.b;
+}
+bgPixel.prototype.draw = function() {
+	al.mainCanvas.ctx.fillStyle = 'rgb(' + this.color.r + ',' + this.color.g + ',' + this.color.b + ')';
+	al.mainCanvas.ctx.fillRect(this.position.y, this.position.x, 1, 1);
 }
 
 function Entity (position) {
